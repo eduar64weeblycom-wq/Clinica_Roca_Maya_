@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const db = require('../database/db');
 const { verificarSesion } = require("../middleware/auth.middleware");
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 // Todas las rutas de dashboard requieren sesión
 router.use(verificarSesion);
