@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bitácora - Clínicas Roca Maya</title>
+  <link rel="icon" href="/ICONO.jpg" type="image/jpeg">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <script src="/js/bitacora.js"></script>
+  <link rel="stylesheet" href="/css/bitacora.css">
+  
+  <style>
+    /* Estilos mejorados para el switch / botón de estado */
+    .bitacora-status-container {
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 10px;
+      padding: 14px 22px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    }
+    
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 16px;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 0.92rem;
+      transition: all 0.3s ease;
+    }
+    
+    .status-badge.active {
+      background-color: #d1e7dd;
+      color: #0f5132;
+      border: 1px solid #badbcc;
+    }
+    
+    .status-badge.paused {
+      background-color: #f8d7da;
+      color: #842029;
+      border: 1px solid #f5c2c7;
+    }
+
+    .status-badge i {
+      font-size: 0.9rem;
+    }
+
+    /* Switch más grande y bonito */
+    #switchBitacora {
+      width: 2.8em;
+      height: 1.4em;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <div class="header">
+      <div class="logo-container">
+        <button class="logo-btn" id="logoBtn" title="Volver al Dashboard">
+          <img src="/roca-maya-oct.jpg" alt="Clínicas Roca Maya" class="logo">
+        </button>
+        <div class="clinic-name">Clínicas Roca Maya</div>
+      </div>
+    </div>
+
+    <div class="main-content">
+      <div class="page-header">
+        <h1 class="page-title">Bitácora del Sistema</h1>
+        <div class="actions">
+          <button class="btn btn-primary" id="btnImprimir">
+            <i class="fas fa-print"></i> Descarga PDF
+          </button>
+          <!-- BOTÓN EXCEL -->
+          <a href="/excel/bitacora" class="btn btn-excel">
+            <i class="fas fa-file-excel"></i> Descargar Excel
+          </a>
+          <!-- Botón Limpiar Bitácora -->
+          <button class="btn btn-danger" id="btnLimpiarBitacora" style="background-color: #dc3545; color: white;">
+            <i class="fas fa-trash-alt"></i> Limpiar Bitácora
+          </button>
+        </div>
+      </div>
+
+      <!-- Contenedor mejorado del Switch Activar / Pausar Bitácora -->
+      <% const esPausado = (typeof bitacoraActiva !== 'undefined' && bitacoraActiva === 'OFF'); %>
+      <div class="bitacora-status-container">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <div class="form-check form-switch m-0" style="cursor: pointer; transform: scale(1.25);">
+            <input class="form-check-input" type="checkbox" id="switchBitacora" 
+                   style="cursor: pointer;" <%= esPausado ? '' : 'checked' %>>
+          </div>
+          <span id="badgeEstadoBitacora" class="status-badge <%= esPausado ? 'paused' : 'active' %>">
+            <i class="fas <%= esPausado ? 'fa-pause-circle' : 'fa-check-circle' %>"></i>
+            <span id="labelEstadoBitacora"><%= esPausado ? 'Bitácora Pausada' : 'Bitácora Activa' %></span>
+          </span>
+        </div>
+      </div>
+
+      <div class="filters">
+        <div class="filter-group">
+          <label class="filter-label">Fecha desde:</label>
+          <input type="date" class="filter-input" id="fechaDesde">
+        </div>
+        <div class="filter-group">
+          <label class="filter-label">Fecha hasta:</label>
+          <input type="date" class="filter-input" id="fechaHasta">
+        </div>
+        <div class="filter-group">
+          <label class="filter-label">Usuario:</label>
+          <input type="text" class="filter-input" id="usuarioFilter" placeholder="Filtrar por usuario...">
+        </div>
+        <div class="filter-group">
+          <label class="filter-label">Módulo:</label>
+          <input type="text" class="filter-input" id="moduloFilter" placeholder="Filtrar por módulo...">
+        </div>
+        <div class="filter-group">
+          <label class="filter-label">Descripción:</label>
+          <input type="text" class="filter-input" id="descripcionFilter" placeholder="Filtrar por descripción...">
+        </div>
+
+        <button class="btn btn-primary" id="btnAplicarFiltros">
+          <i class="fas fa-filter"></i> Aplicar Filtros
+        </button>
+        <button class="btn btn-secondary" id="btnLimpiarFiltros">
+          <i class="fas fa-times"></i> Limpiar
+        </button>
+      </div>
+
+      <div class="table-container">
+        <table class="bitacora-table" id="bitacoraTable">
+          <thead>
+            <tr>
+              <th>Fecha y Hora</th>
+              <th>Usuario</th>
+              <th>Acción</th>
+              <th>Módulo</th>
+              <th>Descripción</th>
+            </tr>
+          </thead>
+          <tbody id="tablaBody">
+            <% if (registros && registros.length > 0) { %>
+              <% registros.forEach(r => { %>
+                <tr class="fila-registro">
+                  <td class="fecha-hora"><%= r.FECHA_HORA %></td>
+                  <td class="usuario"><%= r.USUARIO %></td>
+                  <td class="accion"><%= r.ACCION %></td>
+                  <td class="modulo"><%= r.MODULO %></td>
+                  <td class="descripcion"><%= r.DESCRIPCION %></td>
+                </tr>
+              <% }) %>
+            <% } else { %>
+              <tr>
+                <td colspan="5" class="no-results no-results-message">
+                  No se encontraron registros de Bitácora en la base de datos.
+                </td>
+              </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="filters" style="justify-content: space-between;">
+        <div><strong>Total de registros:</strong> <span id="totalRegistros">0</span></div>
+        <div><strong>Registros mostrados:</strong> <span id="registrosMostrados">0</span></div>
+        <div><strong>Última actualización:</strong> <span id="ultimaActualizacion"></span></div>
+      </div>
+    </div>
+
+    <div class="footer">
+      Clínicas Roca Maya - Sistema de Gestión &copy; 2025
+    </div>
+  </div>
+
+  <div id="loading" class="loading" style="display:none;">
+    <div style="background: white; padding: 20px; border-radius: 10px; color: #333;">
+      <i class="fas fa-spinner fa-spin"></i> Generando PDF...
+    </div>
+  </div>
+
+  <script>
+    // Limpiar Bitácora
+    document.getElementById('btnLimpiarBitacora').addEventListener('click', async () => {
+      if (confirm("¿Estás seguro de que deseas borrar todos los registros de la bitácora? Esta acción no se puede deshacer.")) {
+        try {
+          const response = await fetch('/bitacora/limpiar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+          });
+          const resultado = await response.json();
+          
+          if (resultado.ok) {
+            alert("Bitácora limpiada exitosamente.");
+            window.location.reload();
+          } else {
+            alert("Error: " + resultado.mensaje);
+          }
+        } catch (err) {
+          console.error("Error de red:", err);
+          alert("Ocurrió un error al comunicarse con el servidor.");
+        }
+      }
+    });
+
+    // Manejo dinámico e interactivo del Switch Activar/Pausar
+    const switchBitacora = document.getElementById('switchBitacora');
+    const labelEstado = document.getElementById('labelEstadoBitacora');
+    const badgeEstado = document.getElementById('badgeEstadoBitacora');
+
+    function actualizarInterfazEstado(activo) {
+      if (activo) {
+        badgeEstado.className = 'status-badge active';
+        badgeEstado.innerHTML = '<i class="fas fa-check-circle"></i> <span id="labelEstadoBitacora">Bitácora Activa</span>';
+      } else {
+        badgeEstado.className = 'status-badge paused';
+        badgeEstado.innerHTML = '<i class="fas fa-pause-circle"></i> <span id="labelEstadoBitacora">Bitácora Pausada</span>';
+      }
+    }
+
+    switchBitacora.addEventListener('change', async () => {
+      const estaActivo = switchBitacora.checked;
+      const nuevoEstado = estaActivo ? 'ON' : 'OFF';
+      
+      try {
+        const res = await fetch('/bitacora/estado', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ estado: nuevoEstado })
+        });
+        const data = await res.json();
+        
+        if(data.ok) {
+          actualizarInterfazEstado(estaActivo);
+        } else {
+          alert("No se pudo cambiar el estado.");
+          switchBitacora.checked = !estaActivo; 
+        }
+      } catch (e) {
+        console.error(e);
+        alert("Error de conexión al cambiar estado.");
+        switchBitacora.checked = !estaActivo;
+      }
+    });
+  </script>
+</body>
+</html>

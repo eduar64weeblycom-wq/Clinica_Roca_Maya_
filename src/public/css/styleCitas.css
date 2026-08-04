@@ -1,0 +1,368 @@
+/* Variables raíz del tema */
+:root, .ctroot {
+  --color-primary: #1e5799;
+  --color-primary-2: #207cca;
+  --color-primary-3: #2989d8;
+  --color-success: #28a745;
+  --color-warning: #ffc107;
+  --color-danger: #dc3545;
+  --color-info: #17a2b8;
+  --color-card: #ffffff;
+  --color-background: #0f4f86;
+  --color-bg-gradient-a: #1e5799;
+  --color-bg-gradient-b: #207cca;
+  --color-bg-gradient-c: #2989d8;
+  --color-border: #dee2e6;
+  --color-text-dark: #04345a;
+  --color-text-light: #6c757d;
+  --shadow-strong: 0 10px 30px rgba(0,0,0,0.15);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Fondo de la página */
+html, body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(135deg, var(--color-bg-gradient-a) 0%, var(--color-bg-gradient-b) 51%, var(--color-bg-gradient-c) 100%);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: var(--color-text-dark);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Contenedor central principal (estilo Bitácora) */
+.ctcontainer {
+  max-width: 1200px;
+  margin: 28px auto;
+  background: var(--color-card);
+  border-radius: 12px;
+  box-shadow: var(--shadow-strong);
+  overflow: hidden;
+  padding: 0;
+}
+
+/* Encabezado */
+.ctcitas-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: var(--color-card);
+  padding: 20px 24px;
+  border-bottom: 3px solid var(--color-bg-gradient-a);
+}
+
+/* header-left agrupa logo+nombre y bloque de título en fila */
+.ctcitas-header .header-left {
+  display: flex;
+  align-items: center;
+  gap: 28px;              /* separación entre logo-container y title-wrap */
+  min-width: 0;           /* permite que los hijos flex se reduzcan sin overflow */
+}
+
+/* Contenedor del logo (contiene el botón y el nombre de la clínica) */
+.ctcitas-header .logo-container {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex: 0 0 auto;        /* evitar que se reduzca demasiado */
+}
+
+/* Estilo del botón del logo (apariencia tipo Bitácora) */
+.logo-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  border: 1px solid rgba(30, 87, 153, 0.12);
+  padding: 6px;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(30, 87, 153, 0.07);
+  cursor: pointer;
+  transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+  z-index: 50;
+}
+.logo-btn img.logo,
+.logo-container img.logo {
+  height: 44px;
+  width: auto;
+  display: block;
+  object-fit: contain;
+}
+.logo-btn:hover,
+.logo-btn:focus {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 12px 30px rgba(30, 87, 153, 0.14);
+  outline: none;
+}
+@media (min-width: 900px) {
+  .logo-btn { padding: 8px; border-radius: 12px; }
+}
+.logo-btn:focus {
+  box-shadow: 0 0 0 4px rgba(30, 87, 153, 0.12);
+}
+.ctcitas-header .logo-container .logo-btn { margin-left: 6px; }
+
+/* Nombre de la clínica al lado del logo dentro de logo-container */
+.ctcitas-header .clinic-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-bg-gradient-a);
+  white-space: nowrap;
+}
+
+/* Title wrap: título + subtítulo apilados, a la derecha del logo-container */
+.title-wrap {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  min-width: 0;
+  padding-left: 18px;
+  border-left: 1px solid rgba(0,0,0,0.06);
+}
+
+/* Asegurar que título/subtítulo no desborden el header;
+   usar ellipsis si falta espacio en pantallas grandes */
+.title-wrap h1 {
+  margin: 0;
+  font-size: 20px;
+  color: var(--color-bg-gradient-a);
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.title-wrap p {
+  margin: 0;
+  color: var(--color-text-light);
+  font-size: 0.95rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.35;
+}
+
+/* Área de acciones en el header (lado derecho) */
+.actions-right {
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+/* Botones */
+.ctbtn-primary {
+  background: var(--color-bg-gradient-a);
+  color: #fff;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+  display:inline-flex;
+  gap:8px;
+  align-items:center;
+  transition: all 160ms ease;
+}
+.ctbtn-primary:hover { background: var(--color-primary-2); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.12); }
+
+.btn { border-radius: 8px; padding: 8px 12px; }
+
+/* Alertas */
+.ctalert { display:flex; align-items:center; gap:8px; padding:12px 16px; border-radius:8px; margin:14px 18px; }
+.ctalert-success { background: #d4edda; color:#155724; border:1px solid #c3e6cb; }
+.ctalert-error { background: #f8d7da; color:#721c24; border:1px solid #f5c6cb; }
+
+/* Cabecera interna dentro del contenedor */
+.page-header {
+  padding: 18px 24px;
+  border-bottom: 1px solid #eef4fb;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+/* Tarjeta de filtros (estilo bitacora) */
+.ctfiltros-citas {
+  display:flex;
+  gap:18px;
+  flex-wrap:wrap;
+  background: #f8f9fa;
+  padding: 18px;
+  border-radius: 8px;
+  margin: 18px;
+  align-items: flex-end;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.04);
+}
+.ctfiltro-item { flex:1; min-width:180px; display:flex; flex-direction:column; gap:8px; }
+.ctfiltro-item label { font-weight:600; color:var(--color-text-dark); font-size:14px; }
+
+/* Inputs */
+.ctinput-field, .search-input {
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: white;
+  font-size: 14px;
+}
+.ctinput-field:focus, .search-input:focus {
+  outline: none;
+  box-shadow: 0 6px 18px rgba(30,87,153,0.08);
+  border-color: var(--color-bg-gradient-a);
+}
+
+/* Contenedor de la tabla */
+.cttabla-citas {
+  margin: 0 18px 28px 18px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--color-card);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.04);
+}
+
+.cttabla-citas .table {
+  width:100%;
+  border-collapse: collapse;
+  min-width: 700px;
+  margin:0;
+}
+
+/* Cabecera de la tabla con degradado similar a bitacora */
+.cttabla-citas th {
+  padding: 14px 12px;
+  text-align: left;
+  color: white;
+  background: linear-gradient(135deg, var(--color-bg-gradient-a) 0%, var(--color-bg-gradient-b) 100%);
+  font-weight:700;
+  font-size:14px;
+  border-bottom: 2px solid rgba(255,255,255,0.06);
+}
+
+/* Celdas de la tabla */
+.cttabla-citas td {
+  padding: 14px 12px;
+  border-bottom: 1px solid #f0f4f8;
+  color: var(--color-text-dark);
+  vertical-align: top;
+  font-size: 14px;
+}
+.cttabla-citas tbody tr:nth-child(even) { background: #fbfdff; }
+
+/* Estado "sin citas" */
+.ctsin-citas {
+  text-align:center;
+  padding:36px;
+  background: var(--color-card);
+  color: var(--color-text-light);
+}
+.ctsin-citas i { font-size:40px; color:#dbeaf7; }
+
+/* Estado badges (aplicables tanto a citas como a preclínica/consulta) */
+.ctestado-badge {
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-weight:700;
+  font-size:12px;
+  display:inline-block;
+  text-transform:uppercase;
+  color: #000000;
+  min-width: 96px;
+  text-align: center;
+}
+.ctestado-programada { background: #6c757d; } /* gris */
+.ctestado-confirmada { background: #3498db; } /* azul */
+.ctestado-preclinica { background: #17a2b8; } /* teal */
+.ctestado-consulta_medica { background: #007bff; } /* azul oscuro */
+.ctestado-finalizada { background:#28a745; } /* verde */
+.ctestado-cancelada { background:#dc3545; } /* rojo */
+.ctestado-espera { background:#ffc107; color:#212529; } /* amarillo */
+.ctestado-no_asistio { background:#fd7e14; color:#111; } /* naranja */
+
+/* Botones de acción dentro de la tabla */
+.ctacciones-cita { display:flex; gap:8px; flex-wrap:wrap; }
+.ctbtn-accion { padding:8px 10px; border-radius:6px; border:0; font-weight:700; cursor:pointer; color:#fff; background:#4b5563; }
+.ctbtn-accion:hover { opacity:0.95; transform: translateY(-2px); }
+/* Variantes ya existentes (por compatibilidad) */
+.ctbtn-confirmar { background: var(--color-success); }
+.ctbtn-cancelar { background: var(--color-danger); }
+.ctbtn-completar { background: var(--color-info); }
+.ctbtn-preclinica { background: #17a2b8; }
+.ctbtn-consulta { background: #6f42c1; }
+.ctbtn-no-asistio { background: #fd7e14; color:#111; }
+
+/* Botón Edit estilizado (visualmente destacado) */
+.ctbtn-accion.edit {
+  background: linear-gradient(90deg, #17a2b8, #138496);
+  border: 1px solid rgba(0,0,0,0.06);
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(19, 140, 152, 0.12);
+}
+.ctbtn-accion.edit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(19, 140, 152, 0.18);
+}
+
+/* Modal */
+.ctmodal-cita {
+  display:none;
+  position:fixed;
+  inset:0;
+  background: rgba(0,0,0,0.45);
+  z-index: 1200;
+  align-items:center;
+  justify-content:center;
+}
+.ctmodal-contenido {
+  background: var(--color-card);
+  padding: 22px;
+  border-radius: 10px;
+  width: 96%;
+  max-width: 760px;
+  max-height: 90vh;
+  overflow:auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+}
+
+/* Botón de cierre del modal */
+.ctclose-modal {
+  background:#f3f4f6;
+  border:0;
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  font-size:18px;
+  cursor:pointer;
+}
+.ctclose-modal:hover { background:#e6eef6; }
+
+/* Etiquetas dentro del modal */
+.ctform label { font-weight:700; color:var(--color-text-dark); margin-bottom:6px; display:block; }
+
+/* Estadísticas del pie (opcional) */
+.ct-footer-stats {
+  padding: 12px 18px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  color: var(--color-text-light);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .ctcitas-header { flex-direction:column; align-items:flex-start; gap:10px; padding:16px; }
+  .ctfiltros-citas { flex-direction:column; gap:12px; margin: 12px; }
+  .cttabla-citas { margin: 0 12px 18px 12px; }
+  .ctmodal-contenido { max-width: 95%; padding:16px; }
+  .title-wrap h1, .title-wrap p { white-space: normal; overflow: visible; text-overflow: initial; }
+  .ctcitas-header .header-left { gap: 12px; }
+  .title-wrap { padding-left: 0; border-left: none; gap: 4px; }
+}
+
+/* Utilitarios */
+.ctcontainer .page-header { padding: 18px 24px; border-bottom: 1px solid #eef4fb; }
+.ctcitas-header .header-left > * { max-width: 100%; }
