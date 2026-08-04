@@ -14,7 +14,7 @@ const { registrarBitacora } = require("./services/bitacora.service");
 const { enviarCorreo } = require("./services/email.service");
 const { verificarSesion } = require("./middleware/auth.middleware");
 const app = express();
-
+app.set('trust proxy', 1);
 // ============================================================
 // MIDDLEWARES
 // ============================================================
