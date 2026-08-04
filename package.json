@@ -24,6 +24,7 @@
     "morgan": "^1.10.1",
     "multer": "^2.2.0",
     "mysql": "^2.18.1",
+    "mysql-import": "^5.0.26",
     "nodemailer": "^7.0.10",
     "nodemon": "^3.1.10",
     "path": "^0.12.7",
