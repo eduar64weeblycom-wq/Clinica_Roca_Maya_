@@ -371,41 +371,43 @@ router.post("/login", async (req, res) => {
     const validPassword = await bcrypt.compare(password, user.CONTRASENA);
 
     if (!validPassword) {
-      await db.query(
-        "UPDATE TBL_MS_USUARIO SET INTENTOS_FALLIDOS = INTENTOS_FALLIDOS + 1 WHERE ID_USUARIO = ?",
-        [user.ID_USUARIO]
-      );
-      
-      const [intentos] = await db.query(
-        "SELECT INTENTOS_FALLIDOS FROM TBL_MS_USUARIO WHERE ID_USUARIO = ?",
-        [user.ID_USUARIO]
-      );
-      
-      if (intentos[0]?.INTENTOS_FALLIDOS >= 3) {
+        // Si la contraseña es incorrecta, aumentamos los intentos fallidos
         await db.query(
-          "UPDATE TBL_MS_USUARIO SET ESTADO = 'BLOQUEADO' WHERE ID_USUARIO = ?",
-          [user.ID_USUARIO]
+            "UPDATE TBL_MS_USUARIO SET INTENTOS_FALLIDOS = INTENTOS_FALLIDOS + 1 WHERE ID_USUARIO = ?",
+            [user.ID_USUARIO]
         );
-        return res.redirect("/auth/login?error=Usuario bloqueado por exceso de intentos");
-      }
-      
-      return res.redirect("/auth/login?error=Contraseña incorrecta");
+
+        const [intentos] = await db.query(
+            "SELECT INTENTOS_FALLIDOS FROM TBL_MS_USUARIO WHERE ID_USUARIO = ?",
+            [user.ID_USUARIO]
+        );
+        
+        if (intentos[0]?.INTENTOS_FALLIDOS >= 3) {
+            await db.query(
+                "UPDATE TBL_MS_USUARIO SET ESTADO = 'BLOQUEADO' WHERE ID_USUARIO = ?",
+                [user.ID_USUARIO]
+            );
+            return res.redirect("/auth/login?error=Usuario bloqueado por exceso de intentos");
+        }
+        
+        return res.redirect("/auth/login?error=Contraseña incorrecta");
     }
 
+    // Si la contraseña ES correcta, reseteamos intentos y actualizamos última conexión
     await db.query(
-      "UPDATE TBL_MS_USUARIO SET INTENTOS_FALLIDOS = 0, FECHA_ULTIMA_CONEXION = NOW() WHERE ID_USUARIO = ?",
-      [user.ID_USUARIO]
+        "UPDATE TBL_MS_USUARIO SET INTENTOS_FALLIDOS = 0, FECHA_ULTIMA_CONEXION = CURRENT_TIMESTAMP WHERE ID_USUARIO = ?",
+        [user.ID_USUARIO]
     );
 
     res.cookie("user", user.USUARIO, {
-      httpOnly: false,
-      maxAge: 1000 * 60 * 60 * 8 // 8 horas
+        httpOnly: false,
+        maxAge: 1000 * 60 * 60 * 8 // 8 horas
     });
 
     await registrarBitacora({
-      usuario: user.USUARIO,
-      accion: "LOGIN",
-      descripcion: "Inicio de sesión exitoso",
+        usuario: user.USUARIO,
+        accion: "LOGIN",
+        descripcion: "Inicio de sesión exitoso",
     });
 
     res.redirect("/dashboard");
